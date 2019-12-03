@@ -12,3 +12,4 @@ This component was created by conduction (https://www.conduction.nl/team) for th
 Copyright &copy; [Gemeente 's-Hertogenbosch](https://www.s-hertogenbosch.nl/) 2019
 
 [Licensed under the EUPL](LICENCE.md)
+
