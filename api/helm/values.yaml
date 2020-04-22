@@ -6,25 +6,22 @@ settings:
   registryBase: docker.io/conduction
   projectName: prc
   name: prc
-  title: Proto Component
+  title: Proces Registratie Component
   version: V.0.1
-  id: &#039;&#039;
+  id: 
   description: '&#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;'
-  repro: https://github.com/ConductionNL/Proto-component-commonground'
-  demo: prc.zaakonline.nl
-  subdomain: pc  
-  domains:
-    - zaakonline.nl
-    - conduction.nl
-    - huwelijksplanner.online
-    - common-ground.dev
-  domainsJson: ["conduction.nl","zaakonline.nl","huwelijksplanner.online","common-ground.dev"]
+  type: component
+  repro: https://github.com/ConductionNL/procesregistratiecomponent
+  demo: pc.zaakonline.nl
+  container: https://hub.docker.com/repository/docker/conduction/pc-php
+  domain: conduction.nl
+  subdomain: prc
   organisationName: Conduction
   email: info@conduction.nl
   country: Netherlands
   state: Noord-Holland
   locality: Amsterdam
-  unit: Common-Ground  
+  unit: Common-Ground
   env: dev
   debug: 1
   cache: 1
