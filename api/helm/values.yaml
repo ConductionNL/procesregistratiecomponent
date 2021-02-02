@@ -2,25 +2,68 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-php:
-  repository: quay.io/api-platform/php
-  tag: latest
-  pullPolicy: Always
+settings:
+  registryBase: docker.io/conduction
+  projectName: prc
+  name: prc
+  title: Proces Registratie Component
+  version: V.0.1
+  id: 
+  description: '&#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;'
+  type: component
+  repro: https://github.com/ConductionNL/procesregistratiecomponent
+  demo: pc.zaakonline.nl
+  container: https://hub.docker.com/repository/docker/conduction/pc-php
+  domain: conduction.nl
+  subdomain: prc
+  organisationName: Conduction
+  email: info@conduction.nl
+  country: Netherlands
+  state: Noord-Holland
+  locality: Amsterdam
+  unit: Common-Ground
+  env: dev
+  debug: 1
+  cache: 1
   replicaCount: 1
-  mercure:
-    jwtSecret: ""
-  env: prod
-  debug: '0'
-  secret: ""
   corsAllowOrigin: ['*']
-  trustedHosts: '^.*\\.example\\.com$|localhost'
+  trustedHosts: '^localhost$|^127.0.0.1$|^(.+\.)?conduction\.nl$|^(.+\.)?zaakonline\.nl$'
+  pullPolicy: Always
+  # You will need these proxies on kubernetes
   trustedProxies:
     - 10.0.0.0/8
     - 172.16.0.0/12
     - 192.168.0.0/16
+  # If you are runnig a single component on a kubernetes cluster you can just easaliy enable the load balancer, if not you need to set up a multi component load balancer
+  loadbalancerEnabled: false
+  # If you want to enable NLX you are requered to add the appropreate certificates to you nlx-settings folder (located in the /api folder)
+  nlxInwayEnabled: false
+  # If you are runnig a single component on a kubernetes cluster you can just easaliy enable the load balancer, if not you need to set up a multi component load balancer
+  notificationEnabled: false
+  audittrailEnabled: false
+  authorisationEnabled: false
+  healthEnabled: false
+  archiveEnabled: false
+
+security:
+  commongroundId: "9329d8d0-1d5e-433c-bb47-6991053c7fcb"
+  commongroundKey: "9329d8d0-1d5e-433c-bb47-6991053c7fcb"
+  applicationKey: "45c1a4b6-59d3-4a6e-86bf-88a872f35845"
+  userKey: "79d5b14c-70ab-41fb-ac02-917e3288870b"
+  authorisationProviderUser: https://uc.larping.eu
+  authorisationProviderApplication: https://ac.larping.eu
+
+
+php:
+  repository: docker.io/conduction/protocomponent-php
+  tag: latest
+  mercure:
+    jwtSecret: ""
+  env: prod
+  secret: ""
 
 nginx:
-  repository: quay.io/api-platform/nginx
+  repository: docker.io/conduction/protocomponent-nginx
   tag: latest
   pullPolicy: Always
   replicaCount: 1
@@ -28,7 +71,7 @@ nginx:
 varnish:
   enabled: true
   #url: https://example.com
-  repository: quay.io/api-platform/varnish
+  repository: docker.io/conduction/protocomponent-varnish
   tag: latest
   pullPolicy: Always
   replicaCount: 1
