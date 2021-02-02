@@ -1,27 +1,34 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "name" . }}-php
+  name: {{ .Values.settings.name }}-php
   labels:
-    app.kubernetes.io/name: {{ include "name" . }}-php
-    app.kubernetes.io/part-of: {{ include "name" . }}
+    app.kubernetes.io/name: {{ .Values.settings.name }}-php
+    app.kubernetes.io/part-of: {{ .Values.settings.name }}
     helm.sh/chart: {{ include "chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.settings.name }}-php
+  replicas: {{ .Values.php.replicaCount }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "name" . }}-php
-        app.kubernetes.io/part-of: {{ include "name" . }}
+        app.kubernetes.io/name: {{ .Values.settings.name }}-php
+        app.kubernetes.io/part-of: {{ .Values.settings.name }}
         helm.sh/chart: {{ include "chart" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
-        - name: {{ include "name" . }}-php
+        - name: {{ .Values.settings.name }}-php
+        {{ if eq .Values.settings.env "prod"}}
+          image: "{{ .Values.settings.registryBase }}/{{ .Values.settings.projectName }}-php:latest"
+        {{ else }}
           image: "{{ .Values.settings.registryBase }}/{{ .Values.settings.projectName }}-php:{{ .Values.settings.env }}"
+        {{ end }}
           imagePullPolicy: {{ .Values.settings.pullPolicy }}
           ports:
             - containerPort: 9000
@@ -77,11 +84,13 @@ spec:
                   configMapKeyRef:
                       name: {{ template "fullname" . }}
                       key: app-type
+            {{ if .Values.settings.id }}
             - name: APP_ID
               valueFrom:
                     configMapKeyRef:
                         name: {{ template "fullname" . }}
                         key: app-id
+            {{ end }}
             - name: APP_DEMO
               valueFrom:
                 configMapKeyRef:
@@ -170,6 +179,21 @@ spec:
                 configMapKeyRef:
                   name: {{ template "fullname" . }}
                   key: app-archive
+            - name: APP_WEB
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "fullname" . }}
+                  key: app-web
+            - name: APP_SUBPATH_ROUTING
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "fullname" . }}
+                  key: app-subpath-routing
+            - name: APP_SUBPATH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "fullname" . }}
+                  key: app-subpath
             
             # bla bla      
             - name: CORS_ALLOW_ORIGIN
@@ -178,7 +202,7 @@ spec:
                   name: {{ template "fullname" . }}
                   key: cors-allow-origin
             - name: VARNISH_URL
-              value: {{ include "name" . }}-varnish
+              value: {{ .Values.settings.name }}-varnish
             - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
@@ -224,6 +248,20 @@ spec:
                 secretKeyRef:
                   name: {{ template "fullname" . }}
                   key: app_user_key
+            - name: APP_URL
+              {{- if and (eq $.Values.settings.env "prod") (eq $.Values.settings.type "component") }}
+              value: https://{{ $.Values.settings.domain }}/api/{{ $.Values.settings.majorVersion }}/{{ $.Values.settings.subpath }}
+              {{- else if and (eq $.Values.settings.env "prod") $.Values.settings.subpath }}
+              value: https://{{ $.Values.settings.domain }}/{{ $.Values.settings.subpath }}
+              {{- else if eq $.Values.settings.env "prod" }}
+              value: https://{{ $.Values.settings.domain }}
+              {{- else if eq $.Values.settings.type "component" }}
+              value: https://{{ $.Values.settings.env }}.{{ $.Values.settings.domain }}/api/{{ $.Values.settings.majorVersion }}/{{ $.Values.settings.subpath }}
+              {{- else if $.Values.settings.subpath }}
+              value: https://{{ $.Values.settings.env }}.{{ $.Values.settings.domain }}/{{ $.Values.settings.subpath }}
+              {{- else }}
+              value: https://{{ $.Values.settings.env }}.{{ $.Values.settings.domain }}
+              {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- if .Values.nodeSelector }}
