@@ -119,5 +119,5 @@ dependsOn:
 
 installations:
     - type: helm
-      url: "https://github.com/ConductionNL/procesregistratiecomponent/raw/master/api/helm/prc-0.1.0.tgz"
+      url: "https://raw.githubusercontent.com/ConductionNL/procesregistratiecomponent/master/api/helm/"
 
